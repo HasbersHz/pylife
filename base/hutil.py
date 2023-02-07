@@ -1,54 +1,58 @@
+import abc
 from dataclasses import dataclass
-from typing import TextIO
-
 from ctypes import c_int as cint
+from time import monotonic as get_time
 
 
+"""
 def life_fatal(s: str) -> None:
-    return
 def life_warning(s: str) -> None:
-    return
 def life_status(s: str) -> None:
-    return
 def life_begin_progress(dlg_title: str) -> None:
-    return
 def life_abort_progress(frac_done: float, new_msg: str) -> bool:
-    return False
+def life_end_progress() -> None:
 def life_get_user_rules() -> str:
-    return ""
 def life_get_rules_dir() -> str:
-    return ""
 def is_aborted() -> bool:
-    return False
 def get_debug_file() -> TextIO:
-    return TextIO()
+
+def second_count() -> float:
+"""
 
 
-class LifeErrors:
+class HLifeErrors(object, metaclass=abc.ABCMeta):
     """Sick of line ending woes.  This class takes care of this for us."""
     aborted: bool
 
+    @abc.abstractmethod
     def fatal(self, s: str) -> None:
         return
 
+    @abc.abstractmethod
     def warning(self, s: str) -> None:
         return
 
+    @abc.abstractmethod
     def status(self, s: str) -> None:
         return
 
-    def begin_progress(self, dlgtitle: str) -> None:
+    @abc.abstractmethod
+    def begin_progress(self, dlg_title: str) -> None:
         return
 
+    @abc.abstractmethod
     def abort_progress(self, frac_done: float, new_msg: str) -> bool:
         return False
 
+    @abc.abstractmethod
     def end_progress(self) -> None:
         return
 
+    @abc.abstractmethod
     def get_user_rules(self) -> str:
         return ""
 
+    @abc.abstractmethod
     def get_rules_dir(self) -> str:
         return ""
 
@@ -56,23 +60,18 @@ class LifeErrors:
         return
 
 
-def second_count() -> float:
-    return 0.0
-
-
-@dataclass
-class HPerf:
+class HHPerf(object, metaclass=abc.ABCMeta):
     """Performance data.  We keep running values here.  We can copy this
        to "mark" variables, and then report performance for deltas."""
-    fast_node_inc: cint
-    frames: float
-    nodes_calculated: float
-    half_nodes: float
-    depth_sum: float
-    time_stamp: float
-    gen_val: float
-    report_mask: cint
-    report_interval: float
+    fast_node_inc: cint = cint(0)
+    frames: float = 0.0
+    nodes_calculated: float = 0.0
+    half_nodes: float = 0.0
+    depth_sum: float = 0.0
+    time_stamp: float = 0.0
+    gen_val: float = 0.0
+    report_mask: cint = cint(0)
+    report_interval: float = 0.0
 
     def clear(self) -> None:
         self.fast_node_inc = cint(0)
@@ -80,12 +79,14 @@ class HPerf:
         self.nodes_calculated = 0.0
         self.half_nodes = 0.0
         self.depth_sum = 0.0
-        self.time_stamp = second_count()
+        self.time_stamp = get_time()
         self.gen_val = 0.0
 
+    @abc.abstractmethod
     def report(self, mark, verbose: cint) -> None:
         return
 
+    @abc.abstractmethod
     def report_step(self, mark, rate_mark, gen_val: float, verbose: cint) -> None:
         return
 
