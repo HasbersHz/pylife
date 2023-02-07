@@ -1,18 +1,16 @@
-import ctypes
+import abc
 from ctypes import c_int as cint
 
 
 POLL_INTERVAL = cint(1000)
 
 
-class HLifePoll(object):
+class HLifePoll(object, metaclass=abc.ABCMeta):
     __interrupted: cint = cint()
     __calculating: cint = cint()
     __countdown: cint = cint()
 
-    def __init__(self):
-        pass
-
+    @abc.abstractmethod
     def check_events(self) -> cint:
         """This is what should be overridden; it should check events,
            and return 0 if all is okay or 1 if the existing calculation
@@ -47,10 +45,10 @@ class HLifePoll(object):
            poll positions should be carefully selected to be *not*
            millions of times a second."""
         self.__countdown -= cint(1)
-        return self.__interrupted if self.__countdown > 0 else self.inner_poll()
+        return self.__interrupted if self.__countdown > cint(0) else self.inner_poll()
 
+    @abc.abstractmethod
     def inner_poll(self) -> cint:
-        """"""
         pass
 
     def reset_countdown(self) -> None:
@@ -66,10 +64,11 @@ class HLifePoll(object):
            us know if we are called from the callback or not."""
         return self.__calculating
 
+    @abc.abstractmethod
     def bail_if_calculating(self) -> None:
-        """"""
         pass
 
+    @abc.abstractmethod
     def update_pop(self) -> None:
         """Sometimes getPopulation is called when hashlife is in a state
            where we just can't calculate it at that point in time.  So

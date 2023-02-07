@@ -1,5 +1,5 @@
 from hlifepoll import *
-from util import life_warning
+from util import life_fatal
 
 
 class LifePoll(HLifePoll):
@@ -13,7 +13,6 @@ class LifePoll(HLifePoll):
         return cint(0)
 
     def inner_poll(self) -> cint:
-        """"""
         self.bail_if_calculating()
         self.__countdown = POLL_INTERVAL
         self.__calculating += cint(1)
@@ -24,8 +23,7 @@ class LifePoll(HLifePoll):
 
     def bail_if_calculating(self) -> None:
         if self.is_calculating():
-            life_warning("Illegal operation while calculating.")
-            exit()
+            life_fatal("Illegal operation while calculating.")
 
     def update_pop(self) -> None:
         pass
