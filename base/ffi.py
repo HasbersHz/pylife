@@ -1,3 +1,5 @@
+import sys
+
 from cffi import FFI
 
 
@@ -21,3 +23,12 @@ struct supertile { /* 80 bytes */
 
 test = ffi.new("struct supertile*")
 print(test)
+
+from ctypes import c_int
+
+d = c_int(10)
+print(d, type(d))
+d += c_int(1)
+print(d, type(d))
+
+sys.argv

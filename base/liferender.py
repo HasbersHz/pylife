@@ -1,7 +1,7 @@
+from __future__ import annotations
 import abc
+import typing
 from ctypes import c_int as cint, c_ubyte as char
-from typing import Any
-
 from numpy import arange
 
 
@@ -10,6 +10,7 @@ class LifeRender(object, metaclass=abc.ABCMeta):
        Note that we only use blit_bit calls (no set_pixel).
        Coordinates are in the same coordinate system as the
        viewport min/max values.
+
        Also note that the render is responsible for deciding how
        to scale bits up as necessary, whether using the graphics
        hardware or the CPU.  Blits will only be called with
@@ -17,6 +18,7 @@ class LifeRender(object, metaclass=abc.ABCMeta):
        overhead should not be horrible.  Also, the bitmap must
        have zeros for all pixels to the left and right of those
        requested to be rendered (just for simplicity).
+
        If clipping is needed, it's the responsibility of these
        routines, *not* the caller (although the caller should make
        every effort to not call these routines without of bound
@@ -54,7 +56,7 @@ class LifeRender(object, metaclass=abc.ABCMeta):
 
 
 class StateRender(LifeRender, metaclass=abc.ABCMeta):
-    __buf: char
+    __buf: typing.MutableSequence
     __vw: cint
     __vh: cint
 
@@ -71,9 +73,17 @@ class StateRender(LifeRender, metaclass=abc.ABCMeta):
         raise NotImplementedError("get_colors not implemented")
 
     @abc.abstractmethod
-    def state_blit(self, x: cint, y: cint, w: cint, h: cint, pm: Any) -> Any:
-        return pm[
-                  max(x.value, 0):max(y.value, 0)
-                 ][
-                  max(self.__vw.value, x.value + w.value), max(self.__vw.value, x.value + w.value)
-                 ]
+    def state_blit(self, x: cint, y: cint, w: cint, h: cint, pm: typing.MutableSequence) -> None:
+        y_min = max(y.value, 0)
+        y_max = min(self.__vh.value, y.value + h.value) - 1
+        x_min = max(x.value, 0)
+        x_max = min(self.__vw.value, x.value + w.value) - 1
+        if y_max < y_min or x_max < x_min:
+            return 0
+        nb = x_max - x_min + 1
+        for yy in arange(y_min, y_max + 1):
+            # rp = pm[yy - y.value * w.value][x_min - x.value]
+            # wp = self.__buf[yy * self.__vw.value][x_min]
+            for _ in arange(nb):
+                self.__buf[yy * self.__vw.value][x_min] += 1 + pm[yy - y.value * w.value][x_min - x.value]
+                pm[yy - y.value * w.value][x_min - x.value] += 1
