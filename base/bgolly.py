@@ -6,10 +6,10 @@ from dataclasses import dataclass
 
 import click
 
-import lifealgo
-import liferender
-import util
-import viewport
+import base.lifealgo as lifealgo
+import base.liferender as liferender
+import base.util as util
+import base.viewport as viewport
 
 
 start: float = 0

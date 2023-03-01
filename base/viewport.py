@@ -1,7 +1,7 @@
 from __future__ import annotations
 from ctypes import c_int as cint
 
-import lifealgo
+import base.lifealgo
 from overloading import overload
 
 

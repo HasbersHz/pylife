@@ -1,6 +1,6 @@
 import abc
 from ctypes import c_int as cint
-from util import life_fatal
+import base.util
 
 POLL_INTERVAL = cint(1000)
 
@@ -64,7 +64,7 @@ class LifePoll:
 
     def bail_if_calculating(self) -> None:
         if self.is_calculating():
-            life_fatal("Illegal operation while calculating.")
+            util.life_fatal("Illegal operation while calculating.")
 
     def reset_countdown(self) -> None:
         """Sometimes we do a lengthy operation that we *don't* poll

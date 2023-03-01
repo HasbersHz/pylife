@@ -11,9 +11,9 @@ import numpy as np
 
 from overloading import overload
 
-import liferender
-import viewport
-import lifepoll
+import base.liferender as liferender
+import base.viewport as viewport
+import base.lifepoll as lifepoll
 
 cint = ctypes.c_int
 uchar = numpy.ubyte
