@@ -96,8 +96,9 @@ def main():
                                 cells = np.zeros(RESOLUTION, dtype="byte")
                                 is_edge = False
                         case pg.K_x:
-                            is_edge = not is_edge
-                            cells = clear_edges(cells, is_edge)
+                            # is_edge = not is_edge
+                            # cells = clear_edges(cells, is_edge)
+                            ...
 
         pressed = pg.mouse.get_pressed()
         pos = pg.mouse.get_pos()
