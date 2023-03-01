@@ -5,7 +5,8 @@ overloading.py
 
 Function overloading for Python 3
 
-* Project repository: https://github.com/bintoro/overloading.py
+* Original project repository: https://github.com/bintoro/overloading.py
+* Fixed version: https://github.com/HasbersHz/pylife/raw/main/base/overloading.py
 * Documentation: https://overloading.readthedocs.org/
 
 Copyright © 2014–2016 Kalle Tuure. Released under the MIT License.

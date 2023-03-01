@@ -1,9 +1,9 @@
 import os
 import click
 import sys
-from base.bgolly import main
+import base
 
 
 if __name__ == '__main__':
-    main()
+    base.bgolly.main()
     sys.exit()
