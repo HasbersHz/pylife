@@ -1,5 +1,6 @@
 import ctypes
 from typing import Mapping, Any
+import pygame_menu as pgm
 
 import pygame as pg
 import numpy as np
@@ -81,8 +82,20 @@ class Cell(pg.sprite.Sprite):
         self.pos = pos
 
     def update(self, array: np.ndarray, *args: Any, **kwargs: Any) -> None:
-        self.image.fill(CELL_COLORS.get(array[self.pos], ERROR_COLOR))
+        if array[self.pos]:
+            self.image.fill(ALIVE)
+        else:
+            self.image.fill(DEAD)
+        # self.image.fill(CELL_COLORS.get(array[self.pos], ERROR_COLOR))
 
+
+def start_screen(surf, clock):
+    surf.fill(BLACK)
+    menu = pgm.Menu("Pylife", theme=pgm.themes.THEME_DARK)
+
+    while True:
+        pg.display.flip()
+        clock.tick(FPS)
 
 """
 @njit  # cuda.jit('void(int64[:, :], int64[:], int64[:], int64)')
