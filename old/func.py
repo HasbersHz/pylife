@@ -42,13 +42,13 @@ def cells_update(prev: np.ndarray, res: tuple, rules: tuple, order: int) -> np.n
             summa = prev[i_l, j] + prev[i_r, j] + prev[i, j_t] + prev[i, j_b] + prev[i_l, j_t] + \
                     prev[i_r, j_b] + prev[i_l, j_b] + prev[i_r, j_t]
             # nex[i, j] = rules.func(prev[i, j], summa)
-            match prev[i, j]:
-                case 1:
-                    if summa not in rules[1]:
-                        nex[i, j] = 0
-                case 0:
-                    if summa in rules[0]:
-                        nex[i, j] = 1
+            cell = prev[i, j]
+            if cell == 1:
+                if summa not in rules[1]:
+                    nex[i, j] = 0
+            elif cell == 0:
+                if summa in rules[0]:
+                    nex[i, j] = 1
     return nex
 
 

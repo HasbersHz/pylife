@@ -26,7 +26,7 @@ COLORS: list[tuple[int, int, int]] = [
 
 HEIGHT = 1920
 WIDTH = 1080
-SIZE: int = 2
+SIZE: int = 20
 RESOLUTION: tuple[int, int] = (HEIGHT // SIZE, WIDTH // SIZE)
 ORDER = 1
 CELLS_CORNER = 0
