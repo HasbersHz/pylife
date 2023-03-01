@@ -48,7 +48,7 @@ class LifeRender(object, metaclass=abc.ABCMeta):
            and to the transparency values for dead pixels and live pixels"""
         pass
 
-    @abc.abstractmethod
+    # @abc.abstractmethod
     def state_blit(self, x: cint, y: cint, w: cint, h: cint, pm: str):
         """For state renderers, this just copies the cell state; no scaling is
            supported.  Only called for __just_state renderers."""

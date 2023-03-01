@@ -1,12 +1,16 @@
 # -*- coding: utf-8 -*-
 r"""E:\Apps\Python\python.exe -m pyinstaller --add-data "config.py;." -w E:/life/main.py"""
+from __future__ import annotations
 
 import math
 import sys
 import time
+from typing import Mapping
 
 import numpy as np
 import pygame as pg
+import asyncio as ai
+from numba import njit
 from pygame.surface import Surface, SurfaceType
 from pygame_menu import Menu
 
@@ -16,9 +20,17 @@ from menu import Button
 from config import *
 
 
-def draw_cells(cells):
-    for i in np.arange(0, RESOLUTION[0]):
-        for j in np.arange(0, RESOLUTION[1]):
+async def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None, w: int | None = None, h: int | None = None):
+    if x is None:
+        x = 0
+    if y is None:
+        y = 0
+    if w is None:
+        w = len(cells)
+    if h is None:
+        h = len(cells[0])
+    async for i in np.arange(x, w):
+        async for j in np.arange(y, h):
             match cells[i, j]:
                 case 1:
                     pg.draw.rect(WINDOW, ALIVE, [i * SIZE, j * SIZE, SIZE, SIZE])

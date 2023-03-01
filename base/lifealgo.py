@@ -95,15 +95,15 @@ class LifeAlgo(object, metaclass=abc.ABCMeta):
         self._poller = lifepoll.LifePoll()
         self._max_cell_states = cint(2)
 
-    @abc.abstractmethod
+    # @abc.abstractmethod
     def set_cell(self, x: cint, y: cint, new_state: cint) -> cint:
         return cint(0)
 
-    @abc.abstractmethod
+    # @abc.abstractmethod
     def get_cell(self, x: cint, y: cint) -> cint:
         return cint(0)
 
-    @abc.abstractmethod
+    # @abc.abstractmethod
     def next_cell(self, x: cint, y: cint, v: cint) -> cint:
         return cint(0)
 
