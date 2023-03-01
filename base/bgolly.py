@@ -224,10 +224,17 @@ MAXRLE: int = 1000000000
 
 def writepat(fc: cint) -> None:
     this_filename: str = out_filename
-    tmp_filename: str = ''
+    tmp_filename: str = ' ' * 256
     if fc.value >= 0:
         tmp_filename = out_filename
-        p: str = tmp_filename + number_offset
+        p = number_offset.value
+        tmp_filename = tmp_filename[:p] + '-' + tmp_filename[p + 1:]
+        p += 1
+        print(tmp_filename[p], fc)
+        p += len(tmp_filename[:p])
+    print("(->" + this_filename, file=sys.stderr)
+    imp.find_edges()
+
 
 """
 #define STRINGIFY(ARG) STR2(ARG)

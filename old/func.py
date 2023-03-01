@@ -1,5 +1,10 @@
+import ctypes
+from typing import Mapping, Any
+
+import pygame as pg
 import numpy as np
 from numba import njit, cuda
+from config import *
 
 
 @njit
@@ -50,6 +55,33 @@ def cells_update(prev: np.ndarray, res: tuple, rules: tuple, order: int) -> np.n
                 if summa in rules[0]:
                     nex[i, j] = 1
     return nex
+
+
+class Camera:
+    def __init__(self, width, height):
+        self.dx = 0
+        self.dy = 0
+        self.width, self.height = width, height
+
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - self.width // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - self.height // 2)
+
+
+class Cell(pg.sprite.Sprite):
+    def __init__(self, group: pg.sprite.Group, pos: tuple[int, int], color: tuple[int, int, int]):
+        super(Cell, self).__init__(group)
+        self.rect = pg.Rect([pos[0] * SIZE, pos[1] * SIZE, SIZE, SIZE])
+        self.image = pg.Surface((self.rect.width, self.rect.height))
+        self.image.fill(color)
+        self.pos = pos
+
+    def update(self, array: np.ndarray, *args: Any, **kwargs: Any) -> None:
+        self.image.fill(CELL_COLORS.get(array[self.pos], ERROR_COLOR))
 
 
 """

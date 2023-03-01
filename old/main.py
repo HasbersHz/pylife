@@ -2,22 +2,16 @@
 r"""E:\Apps\Python\python.exe -m pyinstaller --add-data "config.py;." -w E:/life/main.py"""
 from __future__ import annotations
 
+import ctypes
 import math
 import sys
 import time
-from typing import Mapping
 
-import numpy as np
-import pygame as pg
-import asyncio as ai
-from numba import njit
 from pygame.surface import Surface, SurfaceType
 from pygame_menu import Menu
 
-from func import clear_edges, cells_update
+from func import *
 from menu import Button
-
-from config import *
 
 
 def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None, w: int | None = None, h: int | None = None):
@@ -31,13 +25,13 @@ def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None, w: in
         h = len(cells[0])
     for i in np.arange(x, w):
         for j in np.arange(y, h):
-            match cells[i, j]:
-                case 1:
-                    pg.draw.rect(WINDOW, ALIVE, [i * SIZE, j * SIZE, SIZE, SIZE])
-                case 0:
-                    pg.draw.rect(WINDOW, DEAD, [i * SIZE, j * SIZE, SIZE, SIZE])
-                case _:
-                    pg.draw.rect(WINDOW, ERROR_COLOR, [i * SIZE, j * SIZE, SIZE, SIZE])
+            cell = cells[i, j]
+            if cell == 1:
+                pg.draw.rect(surf, ALIVE, [i * SIZE, j * SIZE, SIZE, SIZE])
+            elif cell == 0:
+                pg.draw.rect(surf, DEAD, [i * SIZE, j * SIZE, SIZE, SIZE])
+            else:
+                pg.draw.rect(surf, ERROR_COLOR, [i * SIZE, j * SIZE, SIZE, SIZE])
 
 
 def menu(wind, but_exit, but_return):
@@ -47,10 +41,12 @@ def menu(wind, but_exit, but_return):
 
 
 def main():
-    cells: np.ndarray = np.random.randint(0, 2, RESOLUTION, dtype="byte")
+    cell_type = np.ubyte
 
-    for i in (False, True, False):
-        cells = clear_edges(cells, i)
+    cells: np.ndarray = np.random.randint(0, 2, RESOLUTION, dtype=cell_type)
+
+    # for i in (False, True, False):
+    #     cells = clear_edges(cells, i)
 
     clock: pg.time.Clock = pg.time.Clock()
 
@@ -64,12 +60,18 @@ def main():
     is_edge = False
     looper: int = 0
 
+    camera = Camera(WIDTH, HEIGHT)
+
     # Buttons
     but_exit = Button('Exit', BLACK, WHITE, IMAGES, 'button1.png', FONT, WINDOW)
     but_exit.pos_button[1] += but_exit.height * 5
 
-    but_return = Button('', BLACK, WHITE, IMAGES, 'close_button.png', FONT, WINDOW)
+    but_return = Button('R', BLACK, WHITE, IMAGES, 'close_button.png', FONT, WINDOW)
     but_return.pos_button = (HEIGHT - (but_return.height + 40), 20)
+
+    for i, line in enumerate(cells):
+        for j, _ in enumerate(line):
+            Cell(all_sprites, (i, j), BLACK)
 
     while is_running:
         clock.tick(FPS)
@@ -87,11 +89,10 @@ def main():
                     is_menu = not is_menu
                 elif event.key == pg.K_r:
                     if not is_menu:
-                        cells[1:-1, 1:-1] = np.random.randint(0, 2, (RESOLUTION[0] - 2, RESOLUTION[1] - 2),
-                                                              dtype="byte")
+                        cells = np.random.randint(0, 2, (RESOLUTION[0], RESOLUTION[1]), dtype=cell_type)
                 elif event.key == pg.K_DELETE:
                     if not is_menu:
-                        cells = np.zeros(RESOLUTION, dtype="byte")
+                        cells = np.zeros(RESOLUTION, dtype=cell_type)
                         is_edge = False
                 if event.key == pg.K_x:
                     # is_edge = not is_edge
@@ -117,7 +118,9 @@ def main():
         if is_menu:
             menu(WINDOW, but_exit, but_return)
         else:
-            draw_cells(cells)
+            all_sprites.update(cells)
+            all_sprites.draw(surf)
+            WINDOW.blit(surf, (0, 0))
 
         if not (is_pause or is_menu) and looper >= FPS:
             looper = 0
@@ -131,6 +134,7 @@ if __name__ == '__main__':
     pg.display.set_caption(f"Game Of Life <{TITLE}>")
 
     WINDOW: Surface | SurfaceType = pg.display.set_mode((HEIGHT, WIDTH), pg.NOFRAME)
+    surf = pg.Surface((HEIGHT, WIDTH))
     FONT = pg.font.SysFont(*FONTnSIZE)
     main()
 

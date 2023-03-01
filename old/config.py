@@ -1,4 +1,5 @@
 import os
+from typing import Dict, Tuple
 
 
 def tran(*args: int) -> tuple:
@@ -55,3 +56,7 @@ ALIVE: tuple[int, int, int] = WHITE
 DEAD: tuple[int, int, int] = BLACK
 COLOR_INTERFACE: tuple[int, int, int] = DARK_GREY
 ERROR_COLOR: tuple[int, int, int] = RED
+CELL_COLORS: dict[int, tuple[int, int, int]] = {
+    0: DEAD,
+    1: ALIVE
+}
