@@ -1,0 +1,1 @@
+g++ -shared -o life64.so -fPIC -m64 .\gollybase\*.cpp

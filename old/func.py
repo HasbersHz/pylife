@@ -3,6 +3,17 @@ from numba import njit, cuda
 
 
 @njit
+def orderer(array, res, i, j, order=0):
+    i_left = i - 1 if i > 1 else res[0]
+    i_right = i + 1 if i < res[0] else 1
+    j_top = j - 1 if j > 1 else res[1]
+    j_bottom = j + 1 if j < res[1] else 1
+
+    return array[i_left, j], array[i_right, j], array[i, j_top], array[i, j_bottom], \
+           array[i_left, j_top], array[i_right, j_bottom], array[i_left, j_bottom], array[i_right, j_top]
+
+
+@njit
 def clear_edges(array, how=False):
     la = len(array[0])
     lb = len(array)
@@ -22,15 +33,67 @@ def clear_edges(array, how=False):
 @njit  # cuda.jit('void(int64[:, :], int64[:], int64[:], int64)')
 def cells_update(prev: np.ndarray, res: tuple, rules: tuple, order: int) -> np.ndarray:
     nex = prev.copy()
-    for i in np.arange(1, res[0] - 1):
-        for j in np.arange(1, res[1] - 1):
+    for i in np.arange(0, res[0]):
+        for j in np.arange(0, res[1]):
+            i_l = i - 1 if i >= 0 else res[0] - 1  # left
+            i_r = i + 1 if i < res[0] - 1 else 0   # right
+            j_t = j - 1 if j >= 0 else res[1] - 1  # top
+            j_b = j + 1 if j < res[1] - 1 else 0   # bottom
+            summa = prev[i_l, j] + prev[i_r, j] + prev[i, j_t] + prev[i, j_b] + prev[i_l, j_t] + \
+                    prev[i_r, j_b] + prev[i_l, j_b] + prev[i_r, j_t]
+            # nex[i, j] = rules.func(prev[i, j], summa)
             match prev[i, j]:
                 case 1:
-                    summa = np.sum(prev[i - order:i + order + 1, j - order:j + order + 1]) - 1
                     if summa not in rules[1]:
                         nex[i, j] = 0
                 case 0:
-                    summa = np.sum(prev[i - order:i + order + 1, j - order:j + order + 1])
                     if summa in rules[0]:
                         nex[i, j] = 1
     return nex
+
+
+"""
+@njit  # cuda.jit('void(int64[:, :], int64[:], int64[:], int64)')
+def cells_update(prev: np.ndarray, res: tuple, rules: tuple, order: int) -> np.ndarray:
+    nex = prev.copy()
+    for i in np.arange(0, res[0]):
+        for j in np.arange(0, res[1]):
+            summa = np.sum(orderer(prev, res, i, j))
+            # nex[i, j] = rules.func(prev[i, j], summa)
+            match prev[i, j]:
+                case 1:
+                    if summa not in rules[1]:
+                        nex[i, j] = 0
+                case 0:
+                    if summa in rules[0]:
+                        nex[i, j] = 1
+    return nex
+
+
+@njit
+def _cells_update(prev: np.ndarray, res: tuple, rules: tuple, order: int) -> np.ndarray:
+    nex = np.zeros((res[0] + 2, res[1] + 2), dtype=int)
+    nex[1:-1, 1:-1] = prev.copy()
+
+    for i in np.arange(1, res[0] + 1):
+        for j in np.arange(1, res[1] + 1):
+            summa = np.sum(prev[i - order:i + order + 1, j - order:j + order + 1]) - prev[i, j]
+
+            # обработка граничных случаев на торе
+            i_left = i - 1 if i > 1 else res[0]
+            i_right = i + 1 if i < res[0] else 1
+            j_top = j - 1 if j > 1 else res[1]
+            j_bottom = j + 1 if j < res[1] else 1
+            summa += prev[i_left, j] + prev[i_right, j] + prev[i, j_top] + prev[i, j_bottom] + prev[i_left, j_top] + \
+                     prev[i_right, j_bottom] + prev[i_left, j_bottom] + prev[i_right, j_top]
+
+            match prev[i, j]:
+                case 1:
+                    if summa not in rules[1]:
+                        nex[i, j] = 0
+                case 0:
+                    if summa in rules[0]:
+                        nex[i, j] = 1
+
+    return nex[1:-1, 1:-1].copy()
+"""

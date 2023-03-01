@@ -1,3 +1,14 @@
+License info for Pylife
+
+Pylife is an open source, python realization of Golly for exploring
+John Conway's Game of Life and many other types of cellular automata.
+
+For original license of Golly see /docs/License.html
+
+Git:  https://github.com/HasbersHz/pylife
+Contacts:  hasbershz@yandex.ru
+
+
                     GNU GENERAL PUBLIC LICENSE
                        Version 3, 29 June 2007
 

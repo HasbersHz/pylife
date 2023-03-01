@@ -1,5 +1,0 @@
-click
-numba
-numpy
-pygame
-cffi

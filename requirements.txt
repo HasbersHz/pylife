@@ -1,0 +1,17 @@
+numpy
+numba
+pygame
+cffi
+click
+setuptools
+overloading
+cppyy
+torch
+packaging
+tqdm
+psutil
+Cython
+six
+pytest
+astunparse
+pandas
