@@ -20,7 +20,7 @@ from menu import Button
 from config import *
 
 
-async def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None, w: int | None = None, h: int | None = None):
+def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None, w: int | None = None, h: int | None = None):
     if x is None:
         x = 0
     if y is None:
@@ -29,8 +29,8 @@ async def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None,
         w = len(cells)
     if h is None:
         h = len(cells[0])
-    async for i in np.arange(x, w):
-        async for j in np.arange(y, h):
+    for i in np.arange(x, w):
+        for j in np.arange(y, h):
             match cells[i, j]:
                 case 1:
                     pg.draw.rect(WINDOW, ALIVE, [i * SIZE, j * SIZE, SIZE, SIZE])
