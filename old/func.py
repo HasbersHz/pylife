@@ -1,4 +1,5 @@
 import ctypes
+import sys
 from typing import Mapping, Any
 import pygame_menu as pgm
 
@@ -7,6 +8,8 @@ import numpy as np
 from numba import njit, cuda
 from config import *
 
+_is_running = True
+_chose = 0
 
 @njit
 def orderer(array, res, i, j, order=0):
@@ -89,13 +92,39 @@ class Cell(pg.sprite.Sprite):
         # self.image.fill(CELL_COLORS.get(array[self.pos], ERROR_COLOR))
 
 
-def start_screen(surf, clock):
-    surf.fill(BLACK)
-    menu = pgm.Menu("Pylife", theme=pgm.themes.THEME_DARK)
+def set_variant(*args):
+    global _chose
+    _chose = args[0][0][1]
 
-    while True:
+
+def outer():
+    global _is_running
+    _is_running = False
+
+
+def start_screen(surf, clock):
+    out = True
+    surf.fill(BLACK)
+    menu = pgm.Menu("Pylife", HEIGHT // 2, WIDTH // 2, theme=pgm.themes.THEME_DARK)
+    menu.add.button("Start", outer)
+    menu.add.selector('Variant:', ALL_RULES, onchange=set_variant)
+    menu.add.button("Quit", sys.exit)
+    while _is_running:
+        events = pg.event.get()
+        for event in events:
+            if event.type == pg.QUIT:
+                sys.exit(0)
+
+        if menu.is_enabled():
+            menu.update(events)
+            menu.draw(surf)
+
         pg.display.flip()
         clock.tick(FPS)
+
+    surf.fill(BLACK)
+
+    return _chose
 
 """
 @njit  # cuda.jit('void(int64[:, :], int64[:], int64[:], int64)')

@@ -54,18 +54,18 @@ PATH = os.path.dirname(__file__)
 IMAGES = os.path.join(PATH, "images")
 SAVES = os.path.join(PATH, "saves")
 
-ALL_RULES: list[tuple[str, tuple[tuple[int], tuple[int]]]] = [
-    ("Original", ((3,), (2, 3))),
-    ("Order 2", ((6,), (4, 6))),
-    ("Day & Night", ((3, 6, 7, 8), (3, 4, 6, 7, 8))),
-    ("Life without Death", ((3,), tran(9))),
-    ("HighLife", ((3, 6), (2, 3))),
-    ("Seeds", ((2,), ())),
-    ("B0", ((0,), (0,)))
+ALL_RULES: list[tuple[str, int, tuple[tuple[int], tuple[int]]]] = [
+    ("Original", 0,             ((3,), (2, 3))),
+    ("Order 2", 1,              ((6,), (4, 6))),
+    ("Day & Night", 2,          ((3, 6, 7, 8), (3, 4, 6, 7, 8))),
+    ("Life without Death", 3,   ((3,), tran(9))),
+    ("HighLife", 4,             ((3, 6), (2, 3))),
+    ("Seeds", 5,                ((2,), ())),
+    ("B0", 6,                   ((0,), (0,)))
 ]
 
 CHOSEN: int = 0
-TITLE, RULES = ALL_RULES[CHOSEN]
+TITLE, _, RULES = ALL_RULES[CHOSEN]
 ALIVE: tuple[int, int, int] = WHITE
 DEAD: tuple[int, int, int] = BLACK
 COLOR_INTERFACE: tuple[int, int, int] = DARK_GREY
