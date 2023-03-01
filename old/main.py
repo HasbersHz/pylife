@@ -77,28 +77,26 @@ def main():
         looper += SPEED
 
         for event in pg.event.get():
-            match event.type:
-                case pg.QUIT:
-                    is_running = False
-                case pg.KEYDOWN:
-                    match event.key:
-                        case pg.K_SPACE:
-                            if not is_menu:
-                                is_pause = not is_pause
-                        case pg.K_ESCAPE:
-                            is_menu = not is_menu
-                        case pg.K_r:
-                            if not is_menu:
-                                cells[1:-1, 1:-1] = np.random.randint(0, 2, (RESOLUTION[0] - 2, RESOLUTION[1] - 2),
-                                                                      dtype="byte")
-                        case pg.K_DELETE:
-                            if not is_menu:
-                                cells = np.zeros(RESOLUTION, dtype="byte")
-                                is_edge = False
-                        case pg.K_x:
-                            # is_edge = not is_edge
-                            # cells = clear_edges(cells, is_edge)
-                            ...
+            if event.type == pg.QUIT:
+                is_running = False
+            elif event.type == pg.KEYDOWN:
+                if event.key == pg.K_SPACE:
+                    if not is_menu:
+                        is_pause = not is_pause
+                elif event.key == pg.K_ESCAPE:
+                    is_menu = not is_menu
+                elif event.key == pg.K_r:
+                    if not is_menu:
+                        cells[1:-1, 1:-1] = np.random.randint(0, 2, (RESOLUTION[0] - 2, RESOLUTION[1] - 2),
+                                                              dtype="byte")
+                elif event.key == pg.K_DELETE:
+                    if not is_menu:
+                        cells = np.zeros(RESOLUTION, dtype="byte")
+                        is_edge = False
+                if event.key == pg.K_x:
+                    # is_edge = not is_edge
+                    # cells = clear_edges(cells, is_edge)
+                    ...
 
         pressed = pg.mouse.get_pressed()
         pos = pg.mouse.get_pos()
