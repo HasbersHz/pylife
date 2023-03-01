@@ -13,9 +13,6 @@ from pygame.surface import Surface, SurfaceType
 from func import *
 from menu import Button
 
-from OpenGL.GL import *
-from OpenGL.GLU import *
-
 
 def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None, w: int | None = None, h: int | None = None):
     if x is None:
@@ -51,8 +48,6 @@ def main():
     # for i in (False, True, False):
     #     cells = clear_edges(cells, i)
 
-    clock: pg.time.Clock = pg.time.Clock()
-
     all_sprites: pg.sprite.Group = pg.sprite.Group()
 
     population = 0
@@ -75,6 +70,8 @@ def main():
     for i, line in enumerate(cells):
         for j, _ in enumerate(line):
             Cell(all_sprites, (i, j), BLACK)
+
+    scale = 1.0
 
     while is_running:
         clock.tick(FPS)
@@ -101,6 +98,11 @@ def main():
                     # is_edge = not is_edge
                     # cells = clear_edges(cells, is_edge)
                     ...
+            elif event.type == pg.MOUSEBUTTONDOWN and not is_menu:
+                if event.button == 4:
+                    scale *= 1.1
+                elif event.button == 5:
+                    scale /= 1.1
 
         # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -148,6 +150,10 @@ if __name__ == '__main__':
     WINDOW: Surface | SurfaceType = pg.display.set_mode((HEIGHT, WIDTH), pg.NOFRAME | pg.DOUBLEBUF)  # | pg.OPENGL
     surf = pg.Surface((HEIGHT, WIDTH))
     FONT = pg.font.SysFont(*FONTnSIZE)
+    clock: pg.time.Clock = pg.time.Clock()
+    CHOSEN = start_screen(WINDOW, clock)
+    TITLE, _, RULES = ALL_RULES[CHOSEN]
+    pg.display.set_caption(f"Game Of Life <{TITLE}>")
     main()
 
 
