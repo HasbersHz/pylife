@@ -12,26 +12,40 @@ def tran(*args: int) -> tuple:
     return tuple(range(*args))
 
 
+BLACK = (0, 0, 0)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+CYAN = (0, 255, 255)
+YELLOW = (255, 255, 0)
+PURPLE = (255, 0, 255)
+WHITE = (255, 255, 255)
+GREY = (85, 85, 85)
+DARK_GREY = (25, 25, 25)
+
+
 COLORS: list[tuple[int, int, int]] = [
-    (BLACK := (0, 0, 0)),
-    (RED := (255, 0, 0)),
-    (GREEN := (0, 255, 0)),
-    (BLUE := (0, 0, 255)),
-    (CYAN := (0, 255, 255)),
-    (YELLOW := (255, 255, 0)),
-    (PURPLE := (255, 0, 255)),
-    (WHITE := (255, 255, 255)),
-    (GREY := (85, 85, 85)),
-    (DARK_GREY := (25, 25, 25))
+    BLACK,
+    RED,
+    GREEN,
+    BLUE,
+    CYAN,
+    YELLOW,
+    PURPLE,
+    WHITE,
+    GREY,
+    DARK_GREY,
 ]
 
 HEIGHT = 1920
 WIDTH = 1080
-SIZE: int = 20
+SIZE: int = 10
 RESOLUTION: tuple[int, int] = (HEIGHT // SIZE, WIDTH // SIZE)
 ORDER = 1
 CELLS_CORNER = 0
 FONTnSIZE = ('Console Font', 30)
+
+DEBUG = True
 
 FPS: int = 120
 SPEED: int = FPS

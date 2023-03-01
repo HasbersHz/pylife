@@ -6,12 +6,15 @@ import ctypes
 import math
 import sys
 import time
+import timeit
 
 from pygame.surface import Surface, SurfaceType
-from pygame_menu import Menu
 
 from func import *
 from menu import Button
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
 
 
 def draw_cells(cells: Mapping, x: int | None = None, y: int | None = None, w: int | None = None, h: int | None = None):
@@ -99,6 +102,10 @@ def main():
                     # cells = clear_edges(cells, is_edge)
                     ...
 
+        # glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
+
+        # camera.update(...)
+
         pressed = pg.mouse.get_pressed()
         pos = pg.mouse.get_pos()
         if pressed and not is_menu:
@@ -107,7 +114,6 @@ def main():
                 cells[pos_size] = 1
             elif pressed[2]:
                 cells[pos_size] = 0
-            pg.display.update()
         elif pressed and is_menu:
             if pressed[0]:
                 if but_exit.update(*pos):
@@ -122,18 +128,24 @@ def main():
             all_sprites.draw(surf)
             WINDOW.blit(surf, (0, 0))
 
+        if DEBUG:
+            WINDOW.blit(FONT.render(str(int(clock.get_fps())), True, GREEN), (0, 0))
+
         if not (is_pause or is_menu) and looper >= FPS:
             looper = 0
             cells = cells_update(cells, RESOLUTION, RULES, ORDER)
+            WINDOW.blit(surf, (0, 0))
 
-        pg.display.update()
+        pg.display.flip()
 
 
 if __name__ == '__main__':
     pg.init()
     pg.display.set_caption(f"Game Of Life <{TITLE}>")
-
-    WINDOW: Surface | SurfaceType = pg.display.set_mode((HEIGHT, WIDTH), pg.NOFRAME)
+    # pg.display.gl_set_attribute(pg.GL_ALPHA_SIZE, 8)
+    # pg.display.gl_set_attribute(pg.GL_CONTEXT_MAJOR_VERSION, 3)
+    # pg.display.gl_set_attribute(pg.GL_CONTEXT_MINOR_VERSION, 3)
+    WINDOW: Surface | SurfaceType = pg.display.set_mode((HEIGHT, WIDTH), pg.NOFRAME | pg.DOUBLEBUF)  # | pg.OPENGL
     surf = pg.Surface((HEIGHT, WIDTH))
     FONT = pg.font.SysFont(*FONTnSIZE)
     main()
